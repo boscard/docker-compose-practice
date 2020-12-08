@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+   db:
+     image: percona:8.0
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+
+   app1:
+     depends_on:
+       - db
+     build: ./app1
+     restart: always
+
+   app2:
+     depends_on:
+       - db
+     build: ./app2
+     restart: always
+
+   nginx:
+     depends_on:
+       - app1
+       - app2
+     build: ./nginx
+     ports:
+       - "8000:80"
+volumes:
+    db_data: {}
